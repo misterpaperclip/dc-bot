@@ -69,4 +69,5 @@ client.on('ready', () => {
 });
 
 // Log in with the specified token
+console.log('Token:', token);
 client.login(token);

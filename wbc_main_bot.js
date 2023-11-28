@@ -42,7 +42,7 @@ for (const file of commandFiles) {
 
 // Retrieve client ID and token from environment variables
 const clientId = process.env.GITHUB_CLIENT_ID || process.env.CLIENT_ID;
-const token = process.env.GITHUB_BOT_TOKEN || process.env.BOT_TOKEN;
+const token = process.env.GITHUB_CLIENT_TOKEN || process.env.CLIENT_TOKEN;
 
 // Set up REST client
 const rest = new REST({ version: '9' }).setToken(token);

@@ -17,5 +17,7 @@ steps:
 
 - script: |
     npm install
-    node wbc_main_bot.js
   displayName: 'Run Discord Bot'
+
+- script: |
+    node wbc_main_bot.js

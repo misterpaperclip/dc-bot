@@ -1,40 +1,23 @@
-on:
-  workflow_dispatch:
-    inputs:
-      ENV_CONTEXT_VAR:
-        description: 'Environment context variable'
-        required: true
+trigger:
+- master
 
-env:
-  CLIENT_ID: ${{ secrets.GITHUB_CLIENT_ID }}
-  CLIENT_TOKEN: ${{ secrets.GITHUB_CLIENT_TOKEN }}
+pool:
+  vmImage: 'ubuntu-latest'
 
 jobs:
-  display-variables:
-    name: Display Variables
-    runs-on: ubuntu-latest
-    steps:
-    - name: Use variables
-      run: |
-        echo "GitHub Client ID: $CLIENT_ID"
-        echo "GitHub Client Token: $CLIENT_TOKEN"
-        echo "Environment Context Variable: $ENV_CONTEXT_VAR"
-      env:
-        CLIENT_ID: ${{ secrets.GITHUB_CLIENT_ID }}
-        CLIENT_TOKEN: ${{ secrets.GITHUB_CLIENT_TOKEN }}
-        ENV_CONTEXT_VAR: ${{ github.event.inputs.ENV_CONTEXT_VAR }}
-    
-    - name: Install Node.js
-      uses: actions/setup-node@v4
-      with:
-        node-version: '10.x'
+- job: RunDiscordBot
+  steps:
+  - task: NodeTool@0
+    inputs:
+      versionSpec: '10.x'
+    displayName: 'Install Node.js'
 
-    - name: Install dependencies and run Discord bot
-      run: |
-        npm install
-        export GITHUB_CLIENT_ID=$CLIENT_ID
-        export GITHUB_CLIENT_TOKEN=$CLIENT_TOKEN
-        node wbc_main_bot.js
-      env:
-        CLIENT_ID: ${{ secrets.GITHUB_CLIENT_ID }}
-        CLIENT_TOKEN: ${{ secrets.GITHUB_CLIENT_TOKEN }}
+  - script: |
+      npm install
+      export GITHUB_CLIENT_ID=$(CLIENT_ID)
+      export GITHUB_CLIENT_TOKEN=$(CLIENT_TOKEN)
+      node wbc_main_bot.js
+    displayName: 'Run Discord Bot'
+    env:
+      CLIENT_ID: $(GITHUB_CLIENT_ID)
+      CLIENT_TOKEN: $(GITHUB_CLIENT_TOKEN)

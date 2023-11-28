@@ -5,7 +5,7 @@ pool:
   vmImage: 'ubuntu-latest'
 
 jobs:
-- job: RunDiscordBot
+- job: DeployWBCodesBot
   steps:
   - task: NodeTool@0
     inputs:
@@ -14,10 +14,8 @@ jobs:
 
   - script: |
       npm install
-      export GITHUB_CLIENT_ID=$(CLIENT_ID)
-      export GITHUB_CLIENT_TOKEN=$(CLIENT_TOKEN)
       node wbc_main_bot.js
     displayName: 'Run Discord Bot'
     env:
-      CLIENT_ID: $(GITHUB_CLIENT_ID)
-      CLIENT_TOKEN: $(GITHUB_CLIENT_TOKEN)
+      CLIENT_ID: $(CLIENT_ID)
+      CLIENT_TOKEN: $(CLIENT_TOKEN)

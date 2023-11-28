@@ -33,6 +33,8 @@ jobs:
   - script: |
       docker build -t "$(docker_image_name)" .
     displayName: 'Build Docker Image'
+    env:
+      DOCKER_IMAGE_NAME: 'docker_image_name'
 
   - script: |
       docker push "$(docker_registry)/$(docker_image_name)"

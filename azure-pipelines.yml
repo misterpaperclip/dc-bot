@@ -5,7 +5,7 @@ pool:
   vmImage: 'ubuntu-latest'
 
 jobs:
-- job: DeployWBCodesBot
+- job: PushWBCodeBotToDocker
   steps:
   - task: NodeTool@0
     inputs:
@@ -21,3 +21,19 @@ jobs:
     env:
       CLIENT_ID: $(CLIENT_ID)
       CLIENT_TOKEN: $(CLIENT_TOKEN)
+
+  - script: |
+      echo "$(docker_password)" | docker login -u "$(docker_username)" --password-stdin "$(docker_registry)"
+    displayName: 'Docker Login'
+    env:
+      DOCKER_REGISTRY: 'docker_registry'
+      DOCKER_USERNAME: 'docker_username'
+      DOCKER_PASSWORD: 'docker_password'
+
+  - script: |
+      docker build -t "$(docker_image_name)" .
+    displayName: 'Build Docker Image'
+
+  - script: |
+      docker push "$(docker_registry)/$(docker_image_name)"
+    displayName: 'Push Docker Image'

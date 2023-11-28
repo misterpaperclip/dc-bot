@@ -14,6 +14,8 @@ jobs:
 
   - script: |
       npm install
+      export CLIENT_ID=$(CLIENT_ID)
+      export CLIENT_TOKEN=$(CLIENT_TOKEN)
       node wbc_main_bot.js
     displayName: 'Run Discord Bot'
     env:

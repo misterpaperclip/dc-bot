@@ -1,9 +1,9 @@
 const { Client, Intents } = require('discord.js');
 const { REST } = require('@discordjs/rest');
 const { Routes } = require('discord-api-types/v9');
-
 const fs = require('fs');
 
+// Set up the client with specified intents
 const client = new Client({
     intents: [
         Intents.FLAGS.GUILDS,
@@ -12,13 +12,15 @@ const client = new Client({
     ],
 });
 
-
+// Read commands from the 'commands' folder
 const commands = [];
 const commandFiles = fs.readdirSync('./commands').filter(file => file.endsWith('.js'));
 
 for (const file of commandFiles) {
     const command = require(`./commands/${file}`);
     commands.push(command.data);
+
+    // Set up interactionCreate event
     client.on('interactionCreate', async interaction => {
         if (!interaction.isCommand()) return;
 
@@ -38,11 +40,14 @@ for (const file of commandFiles) {
     });
 }
 
-const clientId = '1178936725494571058'; // Replace with your actual client ID
-const token = 'MTE3ODkzNjcyNTQ5NDU3MTA1OA.GXuScL.C7cXcJ9BglMtUxzobGVleLfCA22hlb3vk_5C1g'; // Replace with your actual bot token
+// Retrieve client ID and token from environment variables
+const clientId = process.env.GITHUB_CLIENT_ID || process.env.CLIENT_ID;
+const token = process.env.GITHUB_BOT_TOKEN || process.env.BOT_TOKEN;
 
+// Set up REST client
 const rest = new REST({ version: '9' }).setToken(token);
 
+// Refresh application (/) commands
 (async () => {
     try {
         console.log('Started refreshing application (/) commands.');
@@ -63,4 +68,5 @@ client.on('ready', () => {
     console.log(`Logged in as ${client.user.tag}!`);
 });
 
+// Log in with the specified token
 client.login(token);

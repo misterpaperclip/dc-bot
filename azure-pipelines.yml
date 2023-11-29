@@ -31,5 +31,5 @@ jobs:
       DOCKER_IMAGE_NAME: 'your_image_name'
 
   - script: |
-      docker push "$(DOCKER_REGISTRY)/$(DOCKER_IMAGE_NAME)"
+      docker push "$(DOCKER_REGISTRY)/$(DOCKER_USERNAME)/$(DOCKER_IMAGE_NAME)"
     displayName: 'Push Docker Image'

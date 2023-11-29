@@ -17,10 +17,10 @@ jobs:
     displayName: 'Install NPM'
 
   - script: |
-      echo "$(DOCKER_PASSWORD)" | docker login -u "$(DOCKER_USERNAME)" --password-stdin "$(DOCKER_REGISTRY)"
+      echo "$(DOCKER_PASSWORD)" | docker login -u "$(DOCKER_USERNAME)" --password-stdin "$(VM_IP)"
     displayName: 'Docker Login'
     env:
-      DOCKER_REGISTRY: '$(DOCKER_REGISTRY)'
+      VM_IP: '$(VM_IP)'
       DOCKER_USERNAME: '$(DOCKER_USERNAME)'
       DOCKER_PASSWORD: '$(DOCKER_PASSWORD)'
 

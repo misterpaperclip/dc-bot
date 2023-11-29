@@ -18,18 +18,10 @@ jobs:
 
   - script: |
       echo "$(DOCKER_PASSWORD)" | docker login -u "$(DOCKER_USERNAME)" --password-stdin "$(DOCKER_REGISTRY)"
-    displayName: 'Docker Login'
+      docker build -t "$(DOCKER_REGISTRY)/$(DOCKER_IMAGE_NAME)" .
+      docker push "$(DOCKER_REGISTRY)/$(DOCKER_IMAGE_NAME)"
+    displayName: 'Docker Things'
     env:
       DOCKER_REGISTRY: '$(DOCKER_REGISTRY)'
       DOCKER_USERNAME: '$(DOCKER_USERNAME)'
       DOCKER_PASSWORD: '$(DOCKER_PASSWORD)'
-
-  - script: |
-      docker build -t "$(DOCKER_REGISTRY)/$(DOCKER_IMAGE_NAME)" .
-    displayName: 'Build and Push Docker Image'
-    env:
-      DOCKER_IMAGE_NAME: '$(DOCKER_IMAGE_NAME)'
-
-  - script: |
-      docker push "$(DOCKER_REGISTRY)/$(DOCKER_IMAGE_NAME)"
-    displayName: 'Push Docker Image'

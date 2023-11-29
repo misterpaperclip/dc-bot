@@ -33,7 +33,7 @@ jobs:
 
   - script: |
       docker tag "$(DOCKER_USERNAME)/$(DOCKER_IMAGE_NAME)" $(VM_IP):2375/$(DOCKER_IMAGE_NAME)
-      docker push $(VM_IP):2375/$(DOCKER_IMAGE_NAME)
+      docker push $(VM_IP)/$(DOCKER_IMAGE_NAME)
     displayName: 'Push Docker Image to VM'
     env:
       DOCKER_IMAGE_NAME: '$(DOCKER_IMAGE_NAME)'

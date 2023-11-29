@@ -14,7 +14,7 @@ jobs:
 
   - script: |
       npm install
-    displayName: 'Run Discord Bot'
+    displayName: 'Install NPM'
 
   - script: |
       echo "$(DOCKER_PASSWORD)" | docker login -u "$(DOCKER_USERNAME)" --password-stdin "$(DOCKER_REGISTRY)"
@@ -31,5 +31,5 @@ jobs:
       DOCKER_IMAGE_NAME: 'DOCKER_IMAGE_NAME'
 
   - script: |
-      docker push "$(DOCKER_REGISTRY)/$(DOCKER_IMAGE_NAME)"
+      docker push "$(DOCKER_USERNAME)/$(DOCKER_IMAGE_NAME)"
     displayName: 'Push Docker Image'

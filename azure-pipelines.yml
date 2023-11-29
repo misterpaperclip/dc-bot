@@ -17,7 +17,7 @@ jobs:
     displayName: 'Install NPM'
 
   - script: |
-      echo "$(DOCKER_PASSWORD)" | docker login -u "$(DOCKER_USERNAME)" --password-stdin "http://49.13.95.46:2375"
+      echo "$(DOCKER_PASSWORD)" | docker login -u "$(DOCKER_USERNAME)" --password-stdin "https://49.13.95.46:2375"
     displayName: 'Docker Login'
     env:
       VM_IP: 'http://49.13.95.46:2375'

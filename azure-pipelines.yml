@@ -10,6 +10,9 @@ resources:
 
 variables:
   tag: '$(Build.BuildId)'
+  vmUser: 'root'
+  vmIP: '49.13.95.46'
+  vmPassword: 'iAfA4URy6740'
 
 stages:
 - stage: Build
@@ -24,6 +27,30 @@ stages:
       displayName: Build an image
       inputs:
         command: build
-        dockerfile: '$(Build.SourcesDirectory)/Dockerfile'
+        dockerfile: '$(Build.SourcesDirectory)/Dockerfile'  # Replace with the correct path to your Dockerfile
         tags: |
           $(tag)
+
+- stage: Deploy
+  displayName: Deploy to VM
+  jobs:
+  - job: Deploy
+    displayName: Deploy
+    pool:
+      vmImage: 'ubuntu-latest'
+    steps:
+    - task: Docker@2
+      displayName: Push to Azure Container Registry
+      inputs:
+        command: push
+        repository: 'xromir/wbc_bot'
+        tags: '$(tag)'
+    
+    - task: SSH@0
+      displayName: 'SSH to VM'
+      inputs:
+        sshEndpoint: 'YourSSHServiceConnection' # Add your SSH service connection here
+        runOptions: 'inline'
+        inline: |
+          docker pull xromir/wbc_bot:$(tag)
+          docker run -d -p 80:80 xromir/wbc_bot:$(tag)

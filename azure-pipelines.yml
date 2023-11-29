@@ -27,7 +27,7 @@ stages:
       displayName: Build an image
       inputs:
         command: build
-        dockerfile: '$(Build.SourcesDirectory)/Dockerfile'  # Replace with the correct path to your Dockerfile
+        dockerfile: '$(Build.SourcesDirectory)/Dockerfile'
         tags: |
           $(tag)
 
@@ -46,11 +46,12 @@ stages:
         repository: 'xromir/wbc_bot'
         tags: '$(tag)'
     
-    - task: SSH@0
-      displayName: 'SSH to VM'
+    - task: AzureCLI@2
+      displayName: 'SSH to VM and Run Docker Commands'
       inputs:
-        sshEndpoint: 'YourSSHServiceConnection' # Add your SSH service connection here
-        runOptions: 'inline'
-        inline: |
-          docker pull xromir/wbc_bot:$(tag)
-          docker run -d -p 80:80 xromir/wbc_bot:$(tag)
+        azureSubscription: 'YourAzureSubscription' # Replace with your Azure subscription name or service connection name
+        scriptType: 'bash'
+        scriptLocation: 'inlineScript'
+        inlineScript: |
+          sshpass -p $(vmPassword) ssh -o StrictHostKeyChecking=no $(vmUser)@$(vmIP) "docker pull xromir/wbc_bot:$(tag)"
+          sshpass -p $(vmPassword) ssh -o StrictHostKeyChecking=no $(vmUser)@$(vmIP) "docker run -d -p 80:80 xromir/wbc_bot:$(tag)"

@@ -17,10 +17,10 @@ jobs:
     displayName: 'Install NPM'
 
   - script: |
-      echo "$(DOCKER_PASSWORD)" | docker login -u "$(DOCKER_USERNAME)" --password-stdin "https://49.13.95.46:2375"
+      echo "$(DOCKER_PASSWORD)" | docker login -u "$(DOCKER_USERNAME)" --password-stdin "$(VM_IP)"
     displayName: 'Docker Login'
     env:
-      VM_IP: 'http://49.13.95.46:2375'
+      VM_IP: 'http://49.13.95.46:2375'  # Update this to your server's IP
       DOCKER_USERNAME: '$(DOCKER_USERNAME)'
       DOCKER_PASSWORD: '$(DOCKER_PASSWORD)'
 
@@ -32,8 +32,8 @@ jobs:
       DOCKER_IMAGE_NAME: '$(DOCKER_IMAGE_NAME)'
 
   - script: |
-      docker tag "$(DOCKER_USERNAME)/$(DOCKER_IMAGE_NAME)" $(VM_IP):2375/$(DOCKER_IMAGE_NAME)
-      docker push $(DOCKER_USERNAME)/$(DOCKER_IMAGE_NAME)
+      docker tag "$(DOCKER_USERNAME)/$(DOCKER_IMAGE_NAME)" $(VM_IP)/$(DOCKER_IMAGE_NAME)
+      docker push $(VM_IP)/$(DOCKER_IMAGE_NAME)
     displayName: 'Push Docker Image to VM'
     env:
       DOCKER_IMAGE_NAME: '$(DOCKER_IMAGE_NAME)'

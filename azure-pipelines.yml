@@ -17,12 +17,12 @@ jobs:
     displayName: 'Run Discord Bot'
 
   - script: |
-      echo "$(docker_password)" | docker login -u "$(docker_username)" --password-stdin "$(docker_registry)"
+      echo "$(DOCKER_PASSWORD)" | docker login -u "$(DOCKER_USERNAME)" --password-stdin "$(DOCKER_REGISTRY)"
     displayName: 'Docker Login'
     env:
-      DOCKER_REGISTRY: 'docker_registry'
-      DOCKER_USERNAME: 'docker_username'
-      DOCKER_PASSWORD: 'docker_password'
+      DOCKER_REGISTRY: '$(docker_registry)'
+      DOCKER_USERNAME: '$(docker_username)'
+      DOCKER_PASSWORD: '$(docker_password)'
 
   - script: |
       docker build -t "$(docker_image_name)" .

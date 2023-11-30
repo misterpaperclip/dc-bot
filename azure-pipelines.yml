@@ -1,57 +1,39 @@
-# Docker
-# Build a Docker image
-# https://docs.microsoft.com/azure/devops/pipelines/languages/docker
-
 trigger:
 - master
 
-resources:
-- repo: self
+pool:
+  vmImage: 'ubuntu-latest'
 
-variables:
-  tag: '$(Build.BuildId)'
-  vmUser: 'root'
-  vmIP: '49.13.95.46'
-  vmPassword: 'iAfA4URy6740'
+jobs:
+- job: PushWBCodeBotToDocker
+  steps:
+  - task: NodeTool@0
+    inputs:
+      versionSpec: '18.17.1'
+    displayName: 'Install Node.js'
 
-stages:
-- stage: Build
-  displayName: Build image
-  jobs:
-  - job: Build
-    displayName: Build
-    pool:
-      vmImage: ubuntu-latest
-    steps:
-    - task: Docker@2
-      displayName: Build an image
-      inputs:
-        command: build
-        dockerfile: '$(Build.SourcesDirectory)/Dockerfile'
-        tags: |
-          $(tag)
+  - script: |
+      npm install
+    displayName: 'Install NPM'
 
-- stage: Deploy
-  displayName: Deploy to VM
-  jobs:
-  - job: Deploy
-    displayName: Deploy
-    pool:
-      vmImage: 'ubuntu-latest'
-    steps:
-    - task: Docker@2
-      displayName: Push to Azure Container Registry
-      inputs:
-        command: push
-        repository: 'xromir/wbc_bot'
-        tags: '$(tag)'
-    
-    - task: AzureCLI@2
-      displayName: 'SSH to VM and Run Docker Commands'
-      inputs:
-        azureSubscription: 'YourAzureSubscription' # Replace with your Azure subscription name or service connection name
-        scriptType: 'bash'
-        scriptLocation: 'inlineScript'
-        inlineScript: |
-          sshpass -p $(vmPassword) ssh -o StrictHostKeyChecking=no $(vmUser)@$(vmIP) "docker pull xromir/wbc_bot:$(tag)"
-          sshpass -p $(vmPassword) ssh -o StrictHostKeyChecking=no $(vmUser)@$(vmIP) "docker run -d -p 80:80 xromir/wbc_bot:$(tag)"
+  - script: |
+      echo "$(DOCKER_PASSWORD)" | docker login -u "$(DOCKER_USERNAME)" --password-stdin "$(DOCKER_REGISTRY)"
+    displayName: 'Docker Login'
+    env:
+      DOCKER_REGISTRY: '$(DOCKER_REGISTRY)'
+      DOCKER_USERNAME: '$(DOCKER_USERNAME)'
+      DOCKER_PASSWORD: '$(DOCKER_PASSWORD)'
+
+  - script: |
+      docker build -t "$(DOCKER_REGISTRY)/$(DOCKER_IMAGE_NAME)" .
+    displayName: 'Build Docker Image'
+    env:
+      DOCKER_REGISTRY: '$(DOCKER_REGISTRY)'
+      DOCKER_IMAGE_NAME: '$(DOCKER_IMAGE_NAME)'
+
+  - script: |
+      docker push "$(DOCKER_USERNAME)/$(DOCKER_IMAGE_NAME)"
+    displayName: 'Push Docker Image'
+    env:
+      DOCKER_REGISTRY: '$(DOCKER_REGISTRY)'
+      DOCKER_IMAGE_NAME: '$(DOCKER_IMAGE_NAME)'

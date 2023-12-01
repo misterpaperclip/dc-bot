@@ -17,7 +17,6 @@ jobs:
 
   - task: Docker@2
     inputs:
-      containerRegistry: '$(DOCKER_REGISTRY)'
       repository: '$(DOCKER_IMAGE_NAME)'
       command: 'login'
       arguments: '-u "$(DOCKER_USERNAME)" --password-stdin "$(DOCKER_REGISTRY)"'
